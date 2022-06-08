@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:faker/faker.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -18,15 +19,16 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({
+  MyHomePage({
     Key? key,
   }) : super(key: key);
+  final Faker faker = Faker();
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +45,9 @@ class MyHomePage extends StatelessWidget {
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
                   DocumentSnapshot doc = snapshot.data!.docs[index];
-                  return ListTile(title: Text(doc['task']));
+                  return ListTile(
+                    title: Text(doc['task']),
+                  );
                 });
           } else {
             return const Text("No data");
@@ -51,7 +55,11 @@ class MyHomePage extends StatelessWidget {
         },
       )),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          FirebaseFirestore.instance
+              .collection('todos')
+              .add({'task': faker.food.dish()});
+        },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
